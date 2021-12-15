@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 #Be sure you check-out the repo first. Deta CLI needs access to the files
-      - uses: BogDAAAMN/deta-deploy-action@v1.0.1
+      - uses: ./.github/actions/action
         with:
           deta-access-token: ${{ secrets.DETA_TOKEN }}
           deta-name: 'hello_world2'
