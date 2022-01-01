@@ -48,7 +48,8 @@ runs:
         export DETA_ACCESS_TOKEN=${{ inputs.deta-access-token }}
         export MY_SECRET=${{ inputs.my-secret }}
         cd ${{ inputs.deta-project-dir }}
-        ~/.deta/bin/deta deploy
+        echo "MY_SECRET=${MY_SECRET}" > .env
+        ~/.deta/bin/deta deploy -e .env
 
 branding:
   icon: check-circle
