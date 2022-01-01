@@ -5,9 +5,8 @@ app = FastAPI()
 
 @app.get("/")
 async def index(name: str = "World"):
-	y = os.environ.get('MY_SECRET')
+	y = os.getenv('MY_SECRET', "non such secret")
 	z = f"now running some python code {y}"
-	#name = os.getenv("NAME", "world")
 	return f"hello {name}! {z}"
 
 @app.get("/junction")
