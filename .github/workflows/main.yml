@@ -9,6 +9,7 @@ jobs:
       - uses: ./.github/actions
         with:
           deta-access-token: ${{ secrets.DETA_TOKEN }}
+          my-secret: ${{ secrets.MY_SECRET }}
           deta-name: 'hello_world2'
           deta-project: 'default' 
           deta-project-dir: '.'
