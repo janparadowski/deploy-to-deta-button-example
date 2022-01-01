@@ -1,12 +1,11 @@
-import os
+import os, requests
 from fastapi import FastAPI, Response
-import requests
 
 app = FastAPI()
 
 @app.get("/")
 async def index(name: str = "World"):
-	y = os.environ
+	y = os.environ.get('MY_SECRET')
 	z = f"now running some python code {y}"
 	#name = os.getenv("NAME", "world")
 	return f"hello {name}! {z}"
