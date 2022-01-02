@@ -1,5 +1,5 @@
 import os, requests, base64, hmac, hashlib, json, datetime
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, Request
 
 app = FastAPI()
 
@@ -85,10 +85,10 @@ async def success():
     return "Uploaded"
 
 @app.get("/")
-async def index(name: str = "World"):
-	return f"hello {name}!"
+async def index(name: str = "World", request: Request):
+    return f"hello {name}! {request.client.host}"
 
 @app.get("/junction")
 async def get_junction():
-	content = requests.get("https://dev.junction.app/server/ping").text
-	return Response(content=content, media_type="text/html")
+    content = requests.get("https://dev.junction.app/server/ping").text
+    return Response(content=content, media_type="text/html")
