@@ -78,6 +78,7 @@ async def iframe(request: Request):
     """
     vars = s3upload(request.url.hostname)
     template = template.format(**vars)
+    return "Not exposed"
     return Response(content=template, media_type="text/html")
 
 @app.get("/success")
