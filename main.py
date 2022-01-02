@@ -32,7 +32,7 @@ def s3upload():
         "conditions": [
             {"bucket": bucket},
             {"acl": "public-read"},
-            #{"key": "some.file"},
+            ["starts-with", "$key", ""],
             {"success_action_redirect": redirect},
             {"x-amz-server-side-encryption": "AES256"},
             {"x-amz-credential": credentials},
