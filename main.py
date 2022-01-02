@@ -41,7 +41,7 @@ def s3upload():
     expiration = date + datetime.timedelta(minutes=10)
     expiration = expiration.strftime("%Y-%m-%dT%H:%M:%SZ")
     date = date.strftime("%Y%m%d")
-    credentials = f"{access}/{date}/us-east-1/s3/aws4_request"
+    credentials = f"{access}/{date}/us-east-2/s3/aws4_request"
     redirect = "/success"
     bucket = "folly-user-media"
     
