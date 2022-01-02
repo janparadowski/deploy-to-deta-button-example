@@ -9,7 +9,7 @@ def smack(a,b):
 def base64encode(a):
     return base64.b64encode(json.dumps(a).encode()).decode()
 
-def s3upload():
+def s3upload(hostname):
     (access, secret) = os.getenv('MY_SECRET').split(":")
 
     date = datetime.datetime.utcnow()
@@ -18,7 +18,7 @@ def s3upload():
     date = date.strftime("%Y%m%d")
     region = "us-east-2"
     credentials = f"{access}/{date}/{region}/s3/aws4_request"
-    redirect = "/success"
+    redirect = f"https://{hostname}/success"
     bucket = "folly-user-media"
     
     t = smack(("AWS4" + secret).encode('utf-8'), date)
@@ -52,7 +52,7 @@ def s3upload():
     )
 
 @app.get("/iframe")
-async def iframe():
+async def iframe(request: Request):
     template = """
     <html>
       <head>
@@ -76,7 +76,7 @@ async def iframe():
     </body>
     </html>
     """
-    vars = s3upload()
+    vars = s3upload(request.url.hostname)
     template = template.format(**vars)
     return Response(content=template, media_type="text/html")
 
@@ -86,7 +86,7 @@ async def success():
 
 @app.get("/")
 async def index(request: Request, name: str = "World"):
-    host = request.url.path
+    host = request.url.hostname
     return f"hello {name}! {host}"
 
 @app.get("/junction")
