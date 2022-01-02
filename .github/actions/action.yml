@@ -35,7 +35,6 @@ runs:
       shell: bash
       run: |
         export DETA_ACCESS_TOKEN=${{ inputs.deta-access-token }}
-        export MY_SECRET=${{ inputs.my-secret }}
         cd ${{ inputs.deta-project-dir }}
         ~/.deta/bin/deta clone --name ${{ inputs.deta-name }} --project ${{ inputs.deta-project }} tmp/
         cp -r tmp/.deta .
