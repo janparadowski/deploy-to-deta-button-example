@@ -16,12 +16,13 @@ def s3upload():
     expiration = date + datetime.timedelta(minutes=10)
     expiration = expiration.strftime("%Y-%m-%dT%H:%M:%SZ")
     date = date.strftime("%Y%m%d")
-    credentials = f"{access}/{date}/us-east-2/s3/aws4_request"
+    region = "us-east-2"
+    credentials = f"{access}/{date}/{region}/s3/aws4_request"
     redirect = "/success"
     bucket = "folly-user-media"
     
     t = smack(("AWS4" + secret).encode('utf-8'), date)
-    t = smack(t, "us-east-1")
+    t = smack(t, region)
     t = smack(t, "s3")
     t = smack(t, "aws4_request")
     date = f"{date}T000000Z"
@@ -59,7 +60,7 @@ async def iframe():
       </head>
       <body>
       This works for 10 mins after (re-)loading the page.<br/>
-      <form action="https://{bucket}.s3.amazonaws.com/" method="post" enctype="multipart/form-data">
+      <form action="https://s3.amazonaws.com/{bucket}/" method="post" enctype="multipart/form-data">
         <input type="hidden" name="acl" value="public-read" />
         <input type="hidden" name="success_action_redirect" value="{redirect}" />
         <input type="hidden" name="x-amz-server-side-encryption" value="AES256" /> 
