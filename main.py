@@ -1,9 +1,7 @@
-import os, requests
+import os, requests, base64, hmac, hashlib, json, datetime
 from fastapi import FastAPI, Response
 
 app = FastAPI()
-
-import base64, hmac, hashlib, json, datetime
 
 def smack(a,b):
     return hmac.new(a, b.encode('utf-8'), hashlib.sha256).digest()
@@ -21,13 +19,12 @@ def s3upload():
       </head>
       <body>
       This works for 10 mins after (re-)loading the page.<br/>
-      This will upload your local file to {host_css}.
-      <form action="https://s3.amazonaws.com/styles.junction/" method="post" enctype="multipart/form-data">
+      <form action="https://s3.amazonaws.com/{bucket}/" method="post" enctype="multipart/form-data">
         <input type="hidden" name="acl" value="public-read" />
         <input type="hidden" name="success_action_redirect" value="{redirect}" />
         <input type="hidden" name="x-amz-server-side-encryption" value="AES256" /> 
         <input type="hidden" name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
-        <input type="hidden" name="key" value="{host_css}" />
+        <input type="hidden" name="key" value="${{filename}}" />
         <input type="hidden" name="Policy" value="{policy}"/>
         <input type="hidden" name="X-Amz-Signature" value="{signature}" />
         <input type="hidden" name="X-Amz-Credential" value="{credentials}" />
@@ -46,7 +43,7 @@ def s3upload():
     date = date.strftime("%Y%m%d")
     credentials = f"{access}/{date}/us-east-1/s3/aws4_request"
     redirect = "/success"
-    host_css = "test.css"
+    bucket = "folly-user-media"
     
     t = smack(("AWS4" + secret).encode('utf-8'), date)
     t = smack(t, "us-east-1")
@@ -57,9 +54,9 @@ def s3upload():
     policy = {
         "expiration": expiration,
         "conditions": [
-            {"bucket": "styles.junction"},
+            {"bucket": bucket},
             {"acl": "public-read"},
-            {"key": host_css},
+            #{"key": "some.file"},
             {"success_action_redirect": redirect},
             {"x-amz-server-side-encryption": "AES256"},
             {"x-amz-credential": credentials},
@@ -71,7 +68,7 @@ def s3upload():
     signature = hmac.new(t, policy.encode('utf-8'), hashlib.sha256).hexdigest()
     vars = dict(
         redirect = redirect,
-        host_css = host_css,
+        bucket = bucket,
         signature = signature,
         date = date,
         policy = policy,
