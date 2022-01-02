@@ -12,31 +12,6 @@ def base64encode(a):
 def s3upload():
     (access, secret) = os.getenv('MY_SECRET').split(":")
 
-    template = """
-    <html>
-      <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      </head>
-      <body>
-      This works for 10 mins after (re-)loading the page.<br/>
-      <form action="https://s3.amazonaws.com/{bucket}/" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="acl" value="public-read" />
-        <input type="hidden" name="success_action_redirect" value="{redirect}" />
-        <input type="hidden" name="x-amz-server-side-encryption" value="AES256" /> 
-        <input type="hidden" name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
-        <input type="hidden" name="key" value="${{filename}}" />
-        <input type="hidden" name="Policy" value="{policy}"/>
-        <input type="hidden" name="X-Amz-Signature" value="{signature}" />
-        <input type="hidden" name="X-Amz-Credential" value="{credentials}" />
-        <input type="hidden" name="X-Amz-Date" value="{date}" />
-        File to upload: 
-        <input type="file"   name="file" /> <br />
-        <input type="submit" name="submit" value="Upload to Amazon S3" />
-      </form>
-    </body>
-    </html>
-    """
-
     date = datetime.datetime.utcnow()
     expiration = date + datetime.timedelta(minutes=10)
     expiration = expiration.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -66,7 +41,7 @@ def s3upload():
     }
     policy = base64encode(policy)
     signature = hmac.new(t, policy.encode('utf-8'), hashlib.sha256).hexdigest()
-    vars = dict(
+    return dict(
         redirect = redirect,
         bucket = bucket,
         signature = signature,
@@ -74,22 +49,43 @@ def s3upload():
         policy = policy,
         credentials = credentials
     )
-    template = template.format(**vars)
-    return Response(content=template, media_type="text/html")
 
 @app.get("/iframe")
 async def iframe():
-    return s3upload()
-				 
+    template = """
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      </head>
+      <body>
+      This works for 10 mins after (re-)loading the page.<br/>
+      <form action="https://s3.amazonaws.com/{bucket}/" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="acl" value="public-read" />
+        <input type="hidden" name="success_action_redirect" value="{redirect}" />
+        <input type="hidden" name="x-amz-server-side-encryption" value="AES256" /> 
+        <input type="hidden" name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
+        <input type="hidden" name="key" value="${{filename}}" />
+        <input type="hidden" name="Policy" value="{policy}"/>
+        <input type="hidden" name="X-Amz-Signature" value="{signature}" />
+        <input type="hidden" name="X-Amz-Credential" value="{credentials}" />
+        <input type="hidden" name="X-Amz-Date" value="{date}" />
+        <input type="file"   name="file" /> <br />
+        <input type="submit" name="submit" value="Upload to Amazon S3" />
+      </form>
+    </body>
+    </html>
+    """
+    vars = s3upload()
+    template = template.format(**vars)
+    return Response(content=template, media_type="text/html")
+
 @app.get("/success")
 async def success():
     return "Uploaded"
 
 @app.get("/")
 async def index(name: str = "World"):
-	y = os.getenv('MY_SECRET', "non such secret")
-	z = f"now running some python code {y}"
-	return f"hello {name}! {z}"
+	return f"hello {name}!"
 
 @app.get("/junction")
 async def get_junction():
