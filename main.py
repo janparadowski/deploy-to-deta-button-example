@@ -12,7 +12,7 @@ def base64encode(a):
     return base64.b64encode(json.dumps(a).encode()).decode()
 
 def s3upload():
-    (access, secret) = os.getenv('MY_SECRET).split(":")
+    (access, secret) = os.getenv('MY_SECRET').split(":")
 
     template = """
     <html>
