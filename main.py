@@ -85,7 +85,7 @@ async def success():
     return "Uploaded"
 
 @app.get("/")
-async def index(name: str = "World", request: Request):
+async def index(request: Request, name: str = "World"):
     host = request.url.path
     return f"hello {name}! {host}"
 
