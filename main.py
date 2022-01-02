@@ -86,7 +86,8 @@ async def success():
 
 @app.get("/")
 async def index(name: str = "World", request: Request):
-    return f"hello {name}! {request.client.host}"
+    host = request.url.path
+    return f"hello {name}! {host}"
 
 @app.get("/junction")
 async def get_junction():
