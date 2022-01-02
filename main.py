@@ -60,7 +60,7 @@ async def iframe():
       </head>
       <body>
       This works for 10 mins after (re-)loading the page.<br/>
-      <form action="https://s3.amazonaws.com/{bucket}/" method="post" enctype="multipart/form-data">
+      <form action="https://{bucket}.s3.amazonaws.com/" method="post" enctype="multipart/form-data">
         <input type="hidden" name="acl" value="public-read" />
         <input type="hidden" name="success_action_redirect" value="{redirect}" />
         <input type="hidden" name="x-amz-server-side-encryption" value="AES256" /> 
